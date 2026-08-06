@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Filo — notizie da Verona e provincia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E7DAB2;
+    --ink:#2A2013;
+    --ink-2:#F2E9CE;
+    --paper:#2A2013;
+    --paper-dim:#7C6A48;
+    --rosso:#A13A2A;
+    --rosso-2:#8C2C22;
+    --ocra:#C89B3C;
+    --ocra-text:#8A5F14;
+    --line: rgba(42,32,19,0.16);
+    --line-strong: rgba(42,32,19,0.30);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% 18%, rgba(120,88,40,0.07), transparent 38%),
+      radial-gradient(circle at 82% 12%, rgba(120,88,40,0.05), transparent 32%),
+      radial-gradient(circle at 78% 70%, rgba(120,88,40,0.06), transparent 40%),
+      radial-gradient(circle at 25% 85%, rgba(120,88,40,0.05), transparent 36%),
+      radial-gradient(circle, rgba(42,32,19,0.06) 1px, transparent 1.2px) 0 0/16px 16px,
+      var(--bg);
+    color:var(--paper);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- WIRE TICKER ---------- */
+  .ticker-wrap{
+    background:var(--rosso-2);
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    overflow:hidden;
+    position:relative;
+    height:38px;
+    display:flex;
+    align-items:center;
+  }
+  .ticker-label{
+    flex:0 0 auto;
+    background:var(--ink);
+    color:var(--ocra);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:0 14px;
+    height:100%;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    z-index:2;
+    border-right:1px solid rgba(241,238,230,0.15);
+  }
+  .ticker-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--rosso);
+    animation:blink 1.6s infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+  .ticker-track{
+    display:flex;
+    white-space:nowrap;
+    animation: scroll-left 140s linear infinite;
+    padding-left:100%;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state: paused; }
+  .ticker-item{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:#F1EEE6;
+    padding:0 28px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .ticker-item b{ color:var(--ocra); font-weight:500; }
+  @keyframes scroll-left{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-100%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ticker-track{ animation:none; padding-left:0; }
+    .ticker-wrap{ overflow-x:auto; }
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:36px 24px 18px;
+    max-width:1180px;
+    margin:0 auto;
+    border-bottom:3px solid var(--paper);
+    position:relative;
+  }
+  header::after{
+    content:'';
+    position:absolute;
+    left:24px; right:24px; bottom:-7px;
+    height:1px;
+    background:var(--paper);
+    opacity:0.6;
+  }
+  .edition-line{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .masthead{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px 24px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(2.4rem, 6vw, 3.6rem);
+    margin:0;
+    letter-spacing:-0.01em;
+    line-height:0.95;
+  }
+  h1 span{ color:var(--rosso); font-style:italic; font-weight:500;}
+  .tagline{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:var(--paper-dim);
+    letter-spacing:0.02em;
+    max-width:340px;
+    text-align:right;
+  }
+  .status-row{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    font-size:13px;
+    color:var(--paper-dim);
+  }
+  #refreshBtn{
+    background:none;
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    padding:7px 14px;
+    border-radius:100px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:border-color .15s, background .15s;
+  }
+  #refreshBtn:hover{ border-color:var(--rosso); background:rgba(178,58,46,0.12);}
+  #refreshBtn.loading svg{ animation:spin 1s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  #lastUpdate{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- CONTROLS ---------- */
+  .controls{
+    max-width:1180px;
+    margin:0 auto;
+    padding:22px 24px 0;
+  }
+  .search-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+  .search-box{
+    flex:1 1 260px;
+    position:relative;
+  }
+  .search-box input{
+    width:100%;
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    padding:12px 14px 12px 38px;
+    border-radius:100px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    outline:none;
+    transition:border-color .15s;
+  }
+  .search-box input:focus{ border-color:var(--ocra); }
+  .search-box svg{
+    position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    opacity:.55;
+  }
+  .add-toggle{
+    background:var(--ocra);
+    color:var(--ink);
+    border:none;
+    font-weight:600;
+    font-size:13.5px;
+    padding:0 20px;
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .add-toggle:hover{ filter:brightness(1.08); }
+
+  .filter-toggle{
+    background:transparent;
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    padding:0 18px;
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:border-color .15s, background .15s;
+  }
+  .filter-toggle:hover{ border-color:var(--ocra); }
+  .filter-toggle[data-open="true"]{ border-color:var(--ocra); background:rgba(200,155,60,0.12); }
+  .filter-toggle .count{
+    background:var(--ocra);
+    color:var(--ink);
+    font-size:11px;
+    font-weight:700;
+    border-radius:100px;
+    padding:1px 7px;
+    display:none;
+  }
+  .filter-toggle[data-count]:not([data-count="0"]) .count{ display:inline; }
+  .filter-toggle .chevron{ transition:transform .2s; opacity:.7; }
+  .filter-toggle[data-open="true"] .chevron{ transform:rotate(180deg); }
+
+  #filterPanel{
+    display:none;
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:18px;
+  }
+  #filterPanel.open{ display:block; }
+  .filter-panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .filter-panel-head span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--paper-dim);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+  #resetFilters{
+    background:none;
+    border:none;
+    color:var(--ocra);
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+
+  .chip-group{
+    margin-bottom:12px;
+  }
+  .chip-group-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    color:var(--paper-dim);
+    margin-bottom:8px;
+    display:block;
+  }
+  .chips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .chip{
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--paper);
+    font-size:13px;
+    font-family:'Inter',sans-serif;
+    padding:7px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .15s;
+    position:relative;
+  }
+  .chip[data-active="true"]{
+    background:var(--rosso);
+    border-color:var(--rosso);
+    color:#fff;
+  }
+  .chip[data-zone][data-active="true"]{
+    background:var(--zone-color, var(--rosso));
+    border-color:var(--zone-color, var(--rosso));
+  }
+  .chip.source[data-active="false"]{ opacity:.45; }
+  .chip .rm{
+    margin-left:8px;
+    opacity:.6;
+  }
+  .chip .rm:hover{ opacity:1; }
+
+  #snapshotBanner{
+    display:none;
+    background:rgba(200,155,60,0.12);
+    border:1px solid rgba(200,155,60,0.4);
+    color:var(--paper);
+    font-size:13px;
+    line-height:1.5;
+    padding:12px 16px;
+    border-radius:10px;
+    margin-bottom:16px;
+  }
+  #snapshotBanner strong{ color:var(--ocra-text); }
+  #addPanel{
+    display:none;
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:18px;
+  }
+  #addPanel.open{ display:block; }
+  #addPanel h3{
+    margin:0 0 4px;
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.15rem;
+  }
+  #addPanel p{
+    margin:0 0 14px;
+    font-size:13px;
+    color:var(--paper-dim);
+  }
+  .add-form{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.6fr auto;
+    gap:10px;
+  }
+  @media(max-width:760px){ .add-form{ grid-template-columns:1fr; } }
+  .add-form input, .add-form select{
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:13.5px;
+    font-family:'Inter',sans-serif;
+  }
+  .add-form button{
+    background:var(--rosso);
+    color:#fff;
+    border:none;
+    font-weight:600;
+    border-radius:8px;
+    padding:10px 18px;
+    cursor:pointer;
+    font-size:13.5px;
+  }
+  .add-form button:hover{ background:var(--rosso-2); }
+  #addFeedback{ font-size:12.5px; margin-top:10px; font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- GRID ---------- */
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:8px 24px 60px;
+  }
+  #grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
+    gap:18px;
+    margin-top:10px;
+  }
+  .card{
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-decoration:none;
+    transition:transform .15s, border-color .15s;
+  }
+  .card:hover{
+    border-color:var(--line-strong);
+    transform:translateY(-2px);
+  }
+  .card-meta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+  }
+  .badge{
+    padding:3px 9px;
+    border-radius:5px;
+    font-weight:500;
+    letter-spacing:0.02em;
+  }
+  .badge.source{ background:rgba(200,155,60,0.20); color:var(--ocra-text); }
+  .badge.zone{ background:rgba(161,58,42,0.14); color:var(--rosso); }
+  .card-time{ color:var(--paper-dim); margin-left:auto; }
+  .card h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:1.18rem;
+    line-height:1.25;
+    margin:0;
+    letter-spacing:-0.005em;
+  }
+  .card p{
+    font-size:13.5px;
+    line-height:1.5;
+    color:#5B4E38;
+    margin:0;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .card .read-more{
+    font-size:12.5px;
+    color:var(--ocra-text);
+    font-weight:600;
+    margin-top:auto;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+
+  .empty-state, .load-state{
+    grid-column:1/-1;
+    text-align:center;
+    padding:60px 20px;
+    color:var(--paper-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+  }
+  .empty-state b{ color:var(--paper); font-family:'Fraunces',serif; font-size:1.3rem; display:block; margin-bottom:8px; font-weight:500;}
+
+  .source-status{
+    font-size:11.5px;
+    color:var(--paper-dim);
+    font-family:'IBM Plex Mono',monospace;
+    margin-top:6px;
+  }
+  .source-status .fail{ color:#9C2A1F; }
+  .source-status details summary{ cursor:pointer; color:var(--paper); margin-bottom:6px; }
+  .source-status details div{ padding:2px 0 2px 10px; }
+
+  footer{
+    max-width:1180px;
+    margin:0 auto;
+    padding:20px 24px 50px;
+    color:var(--paper-dim);
+    font-size:12px;
+    font-family:'IBM Plex Mono',monospace;
+    border-top:1px solid var(--line);
+  }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--ocra-text);
+    outline-offset:2px;
+  }
+
+  @media(max-width:600px){
+    .masthead{ flex-direction:column; }
+    .tagline{ text-align:left; }
+    header{ padding:26px 16px 16px; }
+    .controls{ padding:18px 16px 0; }
+    main{ padding:6px 16px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker-wrap" role="marquee" aria-label="Ultime notizie">
+  <div class="ticker-label"><span class="ticker-dot"></span>IN DIRETTA</div>
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item mono">Caricamento delle ultime notizie in corso…</div>
+  </div>
+</div>
+
+<header>
+  <div class="edition-line">
+    <span id="editionDate">EDIZIONE DIGITALE</span>
+    <span>VERONA E PROVINCIA</span>
+  </div>
+  <div class="masthead">
+    <h1>IL <span>FILO</span></h1>
+    <div class="tagline">Le notizie di Verona e provincia, testata per testata, quasi in tempo reale.</div>
+  </div>
+  <div class="status-row">
+    <button id="refreshBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      Aggiorna
+    </button>
+    <span id="lastUpdate">—</span>
+    <span id="autoNote" class="mono">· aggiornamento automatico ogni 5 min</span>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-row">
+    <div class="search-box">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchInput" placeholder="Cerca per testata o parola chiave…">
+    </div>
+    <button class="add-toggle" id="addToggle">+ Aggiungi testata</button>
+    <button class="filter-toggle" id="filterToggle" data-open="false" data-count="0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+      Filtri <span class="count" id="filterCount">0</span>
+      <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+  </div>
+
+  <div id="addPanel">
+    <h3>Aggiungi una testata</h3>
+    <p>Conosci un giornale locale non ancora in elenco? Incolla il suo feed RSS: comparirà subito tra le notizie.</p>
+    <div class="add-form">
+      <input type="text" id="newName" placeholder="Nome testata (es. Gardapost)">
+      <select id="newZone"></select>
+      <input type="text" id="newUrl" placeholder="URL del feed RSS (es. https://sito.it/feed)">
+      <button id="newSubmit">Aggiungi</button>
+    </div>
+    <div id="addFeedback"></div>
+  </div>
+
+  <div id="filterPanel">
+    <div class="filter-panel-head">
+      <span>Per default sono visibili tutte le notizie — filtra se vuoi restringere</span>
+      <button id="resetFilters">Mostra tutte</button>
+    </div>
+    <div class="chip-group">
+      <span class="chip-group-label">Zona</span>
+      <div class="chips" id="zoneChips"></div>
+    </div>
+    <div class="chip-group">
+      <span class="chip-group-label">Testata</span>
+      <div class="chips" id="sourceChips"></div>
+    </div>
+  </div>
+
+  <div id="snapshotBanner">
+    <strong>Modalità istantanea.</strong> Il recupero live dei feed non è raggiungibile in questa anteprima (i proxy verso siti esterni sono bloccati per sicurezza). Qui sotto vedi una selezione reale di notizie raccolta il 29 luglio 2026. Se ospiti questo file sul tuo sito, il recupero live tornerà a funzionare normalmente.
+  </div>
+  <div class="source-status" id="sourceStatus"></div>
+</div>
+
+<main>
+  <div id="grid"><div class="load-state">Sto contattando le redazioni…</div></div>
+</main>
+
+<footer>
+  IL FILO — aggregatore indipendente di feed RSS pubblici delle testate di Verona e provincia. Ogni articolo rimanda alla fonte originale: il contenuto integrale resta di proprietà delle rispettive redazioni.
+</footer>
+
+<script>
+// ---------- ZONES ----------
+const ZONES = [
+  {id:'citta', label:'Città', color:'#A13A2A'},
+  {id:'regione', label:'Regione', color:'#45607A'},
+  {id:'baldo-garda', label:'Baldo–Garda', color:'#2E6472'},
+  {id:'lessinia', label:'Lessinia', color:'#3F6B39'},
+  {id:'bassa', label:'Bassa Veronese', color:'#8F6A22'},
+  {id:'est', label:'Est Veronese', color:'#6B4C8C'},
+  {id:'valpolicella', label:'Valpolicella', color:'#8A4726'},
+];
+const zoneById = Object.fromEntries(ZONES.map(z=>[z.id,z]));
+
+// ---------- DEFAULT FEEDS ----------
+const DEFAULT_FEEDS = [
+  {id:'larena', name:"L'Arena", zone:'citta', url:'https://www.larena.it/home/spazio-lettori/rss'},
+  {id:'veronasera', name:'VeronaSera', zone:'citta', url:'http://www.veronasera.it/rss'},
+  {id:'veronain', name:'Verona In', zone:'citta', url:'http://www.verona-in.it/feed/'},
+  {id:'ansaveneto', name:'ANSA Veneto', zone:'regione', url:'https://www.ansa.it/veneto/notizie/veneto_rss.xml'},
+  {id:'giornaleveronesi', name:'Il Giornale dei Veronesi', zone:'citta', url:'https://ilgiornaledeiveronesi.it/feed/'},
+  {id:'giornaleveronesi-garda', name:'Il Giornale dei Veronesi — Garda', zone:'baldo-garda', url:'https://ilgiornaledeiveronesi.it/category/notizie-verona/provincia/lago-di-garda/feed/'},
+  {id:'tgverona', name:'TgVerona', zone:'citta', url:'https://tgverona.telenuovo.it/feed/'},
+  {id:'primaverona', name:'Prima Verona', zone:'citta', url:'https://primadituttoverona.it/feed/'},
+];
+
+const STORAGE_KEY = 'il-filo-custom-feeds';
+const PREF_KEY = 'il-filo-prefs';
+const SNAPSHOT_DATE = '29 luglio 2026';
+
+// Istantanea manuale: articoli reali raccolti il 29/07/2026, usata come riserva
+// quando il recupero live dei feed non è raggiungibile in questa anteprima.
+const SNAPSHOT_ITEMS = [
+  {sourceId:'ansaveneto', sourceName:'ANSA Veneto', zone:'regione',
+    title:"Torna in Veneto l'allerta gialla per le ondate di calore",
+    desc:"La Protezione Civile regionale ha emesso un nuovo bollettino di attenzione per il caldo su gran parte del territorio, con instabilità attesa sui rilievi.",
+    link:'https://www.ansa.it/veneto/notizie/2026/07/28/torna-in-veneto-lallerta-gialla-per-le-ondate-di-calore_4535004f-fb8b-44a0-a6c0-b4054d6e75da.html',
+    pubDate:'2026-07-28T13:59:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'citta',
+    title:"Si allontana dall'ospedale di Borgo Roma e scompare: al via le ricerche",
+    desc:"Un uomo di 78 anni non ha più dato notizie di sé dopo essersi allontanato dal reparto; la famiglia ha lanciato un appello sui social.",
+    link:'https://www.veronasera.it/cronaca/uomo-scomparso-ricerche-ospedale-borgo-roma-22-luglio-2026.html',
+    pubDate:'2026-07-22T17:00:00'},
+  {sourceId:'larena', sourceName:"L'Arena", zone:'citta',
+    title:"Meteo Verona: dopo il break temporalesco torna il gran caldo",
+    desc:"Una rapida perturbazione atlantica porterà temporali anche intensi, prima del ritorno dell'anticiclone africano con temperature sopra i 35 gradi.",
+    link:'https://www.larena.it/territorio-veronese/citta/meteo-verona-previsioni-tempo-estate-luglio-2026-1.9845431',
+    pubDate:'2026-07-23T09:00:00'},
+  {sourceId:'ansaveneto', sourceName:'ANSA Veneto', zone:'citta',
+    title:"Alta velocità Verona-Padova, varata la campata del cavalcavia sulla tangenziale",
+    desc:"Posizionata di notte la struttura centrale del nuovo cavalcavia a San Martino Buon Albergo, tappa dei lavori del Primo Lotto Funzionale.",
+    link:'https://www.ansa.it/veneto/notizie/2026/07/23/alta-velocita-varata-la-campata-del-cavalcavia-sulla-tangenziale-di-verona_df2d0ffd-8743-46c3-99f6-8b83ce7d0fb5.html',
+    pubDate:'2026-07-23T14:28:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'citta',
+    title:"Gioielli rubati da finti poliziotti: la fuga di uno dei due finisce in un fossato",
+    desc:"Un trentenne arrestato dopo un inseguimento; recuperati i preziosi sottratti a un'anziana di Borgo Milano. Proseguono le indagini sul complice.",
+    link:'https://www.veronasera.it/cronaca/arresto-furto-gioielli-casa-anziana-polizia-24-luglio-2026.html',
+    pubDate:'2026-07-24T16:20:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'baldo-garda',
+    title:"Maltempo sul Veronese alle prime luci del giorno, vigili del fuoco al lavoro a Nord",
+    desc:"Pioggia, vento e grandine tra Caprino Veronese e San Zeno di Montagna: alberi e rami caduti creano disagi alla viabilità.",
+    link:'https://www.veronasera.it/cronaca/maltempo-veronese-vigili-fuoco-disagi-nord-17-luglio-.html',
+    pubDate:'2026-07-17T10:14:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'bassa',
+    title:"Donna scomparsa a Legnago, al via le ricerche dei carabinieri",
+    desc:"Il Comune lancia un appello sui social per ritrovare una residente di cui non si hanno notizie da alcuni giorni.",
+    link:'https://www.veronasera.it/cronaca/donna-scomparsa-legnago-ricerche-14-luglio-2026.html',
+    pubDate:'2026-07-14T15:31:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'est',
+    title:"Fumo nero e fiamme da un'auto sulle colline di Lavagno",
+    desc:"Vigili del fuoco da Caldiero e Verona al lavoro nella frazione di Barco per domare l'incendio di un veicolo.",
+    link:'https://www.veronasera.it/cronaca/incendio-fumo-vigili-fuoco-auto-17-luglio-2026.html',
+    pubDate:'2026-07-17T09:09:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'baldo-garda',
+    title:"Raduni non autorizzati di auto elaborate: nuova \"Gardasee Illegal Night\" tra le proteste dei sindaci",
+    desc:"Dopo gli episodi delle scorse settimane tra il lago di Garda e la provincia, i Comuni invitano i cittadini a segnalare ogni raduno al 112.",
+    link:'https://www.veronasera.it/cronaca/gardasee-illegal-night-raduno-auto-tuning-11-luglio-2026.html',
+    pubDate:'2026-07-11T11:29:00'},
+  {sourceId:'veronasera', sourceName:'VeronaSera', zone:'citta',
+    title:"Controlli della polizia locale contro il degrado: oltre 150 sanzioni tra centro e parchi",
+    desc:"Bivagli, lavavetri e artisti di strada non autorizzati tra le violazioni contestate nell'ultimo bilancio dei controlli in città.",
+    link:'https://www.veronasera.it/cronaca/polizia-locale-multe-controlli-degrado-artisti-strada-luglio-2026.html',
+    pubDate:'2026-07-09T13:34:00'},
+  {sourceId:'ansaveneto', sourceName:'ANSA Veneto', zone:'regione',
+    title:"In Veneto 76mila posti di lavoro in più da inizio anno, Verona tra le province trainanti",
+    desc:"Il bilancio del primo semestre 2026 mostra una crescita occupazionale superiore al 2025, con Verona seconda provincia per nuovi contratti dopo Venezia.",
+    link:'https://www.ansa.it/veneto/notizie/2026/07/15/in-veneto-76-mila-posti-di-lavoro-in-piu-da-inizio-anno-crescono-anche-le-assunzioni_830e4943-72a1-4612-a3ad-3ccacbf05d02.html',
+    pubDate:'2026-07-15T12:00:00'},
+  {sourceId:'giornaleveronesi', sourceName:'Il Giornale dei Veronesi', zone:'regione',
+    title:"Adige ai livelli di guardia: \"priorità assoluta garantire l'acqua potabile\"",
+    desc:"La Regione riduce i prelievi a uso irriguo per tutelare l'approvvigionamento potabile, con la portata del fiume ormai sotto la soglia di attenzione.",
+    link:'https://ilgiornaledeiveronesi.it/notizie-veneto/protezione-civile-veneto/adige-ai-livelli-di-guardia-venturini-priorita-assoluta-garantire-lacqua-potabile/',
+    pubDate:'2026-07-29T09:00:00'},
+];
+
+let customFeeds = [];
+let feeds = [...DEFAULT_FEEDS];
+let activeSources = new Set(feeds.map(f=>f.id));
+let activeZones = new Set(); // empty = all
+let allItems = []; // {title, link, pubDate, desc, sourceId, sourceName, zone}
+let feedStatus = {}; // id -> 'ok' | 'fail'
+let refreshTimer = null;
+
+// Multiple fallback strategies: try each in order until one returns items.
+const PROXY_STRATEGIES = [
+  {
+    name: 'allorigins',
+    build: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    parse: (text) => parseXmlFeed(text)
+  },
+  {
+    name: 'rss2json',
+    build: (url) => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=25`,
+    parse: (text) => {
+      const data = JSON.parse(text);
+      if(data.status !== 'ok' || !Array.isArray(data.items)) throw new Error('rss2json status: ' + data.status + (data.message?(' — '+data.message):''));
+      return data.items.map(it=>({
+        title: it.title || '',
+        link: it.link || '',
+        pubDate: it.pubDate || '',
+        desc: it.description || it.content || ''
+      }));
+    }
+  },
+  {
+    name: 'corsproxy.io',
+    build: (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    parse: (text) => parseXmlFeed(text)
+  },
+];
+
+function parseXmlFeed(text){
+  const xml = new DOMParser().parseFromString(text, 'application/xml');
+  if(xml.querySelector('parsererror')) throw new Error('XML non valido');
+  const rssItems = [...xml.querySelectorAll('item')];
+  const atomEntries = rssItems.length ? [] : [...xml.querySelectorAll('entry')];
+  if(rssItems.length){
+    return rssItems.map(node=>({
+      title: textOf(node,'title'),
+      link: textOf(node,'link') || (node.querySelector('link')?.getAttribute('href') || ''),
+      pubDate: textOf(node,'pubDate') || textOf(node,'date') || textOf(node,'published'),
+      desc: textOf(node,'description') || textOf(node,'summary')
+    }));
+  }
+  if(atomEntries.length){
+    return atomEntries.map(node=>({
+      title: textOf(node,'title'),
+      link: node.querySelector('link')?.getAttribute('href') || '',
+      pubDate: textOf(node,'published') || textOf(node,'updated'),
+      desc: textOf(node,'summary') || textOf(node,'content')
+    }));
+  }
+  throw new Error('nessun item/entry trovato nel feed');
+}
+function textOf(node, tag){
+  const el = node.querySelector(tag);
+  return el ? el.textContent.trim() : '';
+}
+
+function zoneColor(id){ return (zoneById[id]||{}).color || '#B23A2E'; }
+function zoneLabel(id){ return (zoneById[id]||{}).label || id; }
+
+// ---------- STORAGE ----------
+async function loadStorage(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){ customFeeds = JSON.parse(res.value); }
+  }catch(e){ customFeeds = []; }
+  feeds = [...DEFAULT_FEEDS, ...customFeeds];
+  try{
+    const pref = await window.storage.get(PREF_KEY, false);
+    if(pref && pref.value){
+      const p = JSON.parse(pref.value);
+      if(Array.isArray(p.activeSources)) activeSources = new Set(p.activeSources);
+      else activeSources = new Set(feeds.map(f=>f.id));
+      if(Array.isArray(p.activeZones)) activeZones = new Set(p.activeZones);
+    } else {
+      activeSources = new Set(feeds.map(f=>f.id));
+    }
+  }catch(e){
+    activeSources = new Set(feeds.map(f=>f.id));
+  }
+}
+
+async function savePrefs(){
+  try{
+    await window.storage.set(PREF_KEY, JSON.stringify({
+      activeSources:[...activeSources],
+      activeZones:[...activeZones]
+    }), false);
+  }catch(e){ /* non bloccante */ }
+}
+
+async function saveCustomFeeds(){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(customFeeds), false); }
+  catch(e){ /* non bloccante */ }
+}
+
+// ---------- RENDER CHIPS ----------
+function renderZoneSelect(){
+  const sel = document.getElementById('newZone');
+  sel.innerHTML = ZONES.map(z=>`<option value="${z.id}">${z.label}</option>`).join('');
+}
+
+function renderChips(){
+  const zoneWrap = document.getElementById('zoneChips');
+  const usedZones = new Set(feeds.map(f=>f.zone));
+  // if no explicit selection stored yet, default to "all used zones active"
+  if(activeZones.size===0){ usedZones.forEach(z=>activeZones.add(z)); }
+  zoneWrap.innerHTML = ZONES.filter(z=>usedZones.has(z.id)).map(z=>{
+    const active = activeZones.has(z.id);
+    return `<button class="chip" data-zone="${z.id}" data-active="${active}" style="--zone-color:${z.color}">${z.label}</button>`;
+  }).join('');
+  zoneWrap.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const zid = btn.dataset.zone;
+      if(activeZones.has(zid)){
+        if(activeZones.size>1) activeZones.delete(zid); // keep at least one zone active
+      } else {
+        activeZones.add(zid);
+      }
+      renderChips();
+      savePrefs();
+      applyFilters();
+    });
+  });
+
+  const srcWrap = document.getElementById('sourceChips');
+  srcWrap.innerHTML = feeds.map(f=>{
+    const active = activeSources.has(f.id);
+    const isCustom = customFeeds.find(c=>c.id===f.id);
+    return `<button class="chip source" data-source="${f.id}" data-active="${active}">${f.name}${isCustom?'<span class="rm" data-remove="'+f.id+'" title="Rimuovi">✕</span>':''}</button>`;
+  }).join('');
+  srcWrap.querySelectorAll('.chip.source').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      if(e.target.dataset && e.target.dataset.remove){
+        e.stopPropagation();
+        removeFeed(e.target.dataset.remove);
+        return;
+      }
+      const sid = btn.dataset.source;
+      if(activeSources.has(sid)) activeSources.delete(sid); else activeSources.add(sid);
+      renderChips();
+      savePrefs();
+      applyFilters();
+    });
+  });
+
+  renderSourceStatus();
+  updateFilterBadge();
+}
+
+function updateFilterBadge(){
+  const totalZones = ZONES.filter(z=>feeds.some(f=>f.zone===z.id)).length;
+  const totalSources = feeds.length;
+  const zonesOff = totalZones - activeZones.size;
+  const sourcesOff = totalSources - activeSources.size;
+  const count = Math.max(0, zonesOff) + Math.max(0, sourcesOff);
+  const btn = document.getElementById('filterToggle');
+  btn.dataset.count = String(count);
+  document.getElementById('filterCount').textContent = count;
+}
+
+function renderSourceStatus(){
+  const el = document.getElementById('sourceStatus');
+  const rows = feeds.map(f=>{
+    const s = feedStatus[f.id];
+    if(!s) return `<div>· ${f.name}: <span class="mono">in attesa…</span></div>`;
+    if(s.state==='ok') return `<div>· ${f.name}: <span class="mono">${s.count} articoli via ${s.via}</span></div>`;
+    return `<div>· <span class="fail">${f.name}: nessuna fonte raggiungibile</span> <span class="mono">(${(s.attempts||[]).join(' · ')})</span></div>`;
+  });
+  el.innerHTML = `<details><summary>Diagnostica sorgenti (${feeds.filter(f=>feedStatus[f.id]?.state==='ok').length}/${feeds.length} attive)</summary>${rows.join('')}</details>`;
+}
+
+// ---------- FETCH ----------
+async function fetchFeed(feed){
+  const attempts = [];
+  for(const strat of PROXY_STRATEGIES){
+    try{
+      const res = await fetch(strat.build(feed.url), {cache:'no-store'});
+      if(!res.ok){ attempts.push(strat.name+': HTTP '+res.status); continue; }
+      const text = await res.text();
+      const raw = strat.parse(text);
+      if(!raw || raw.length===0){ attempts.push(strat.name+': 0 elementi'); continue; }
+      feedStatus[feed.id] = {state:'ok', via:strat.name, count:raw.length, attempts};
+      return raw.map(it=>({
+        title: stripHtml(it.title||'senza titolo'),
+        link: it.link,
+        pubDate: it.pubDate ? new Date(it.pubDate) : new Date(),
+        desc: stripHtml(it.desc||''),
+        sourceId: feed.id,
+        sourceName: feed.name,
+        zone: feed.zone
+      }));
+    }catch(e){
+      attempts.push(strat.name+': '+e.message);
+    }
+  }
+  feedStatus[feed.id] = {state:'fail', attempts};
+  return [];
+}
+
+function stripHtml(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return (tmp.textContent||tmp.innerText||'').trim();
+}
+
+async function refreshAll(){
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading');
+  const results = await Promise.allSettled(feeds.map(fetchFeed));
+  allItems = results.flatMap(r => r.status==='fulfilled' ? r.value : []);
+  allItems.sort((a,b)=> b.pubDate - a.pubDate);
+
+  const anyLive = Object.values(feedStatus).some(s=>s && s.state==='ok');
+  const banner = document.getElementById('snapshotBanner');
+  if(!anyLive){
+    allItems = SNAPSHOT_ITEMS.map(it=>({
+      title: it.title, link: it.link, pubDate: new Date(it.pubDate),
+      desc: it.desc, sourceId: it.sourceId, sourceName: it.sourceName, zone: it.zone
+    })).sort((a,b)=> b.pubDate - a.pubDate);
+    banner.style.display = 'block';
+    document.getElementById('lastUpdate').textContent = "istantanea del " + SNAPSHOT_DATE;
+  } else {
+    banner.style.display = 'none';
+    document.getElementById('lastUpdate').textContent = "aggiornato alle " + new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  renderSourceStatus();
+  applyFilters();
+  renderTicker();
+  btn.classList.remove('loading');
+}
+
+// ---------- FILTER + RENDER ----------
+function applyFilters(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const zonesActive = getEffectiveZoneFilter();
+  const filtered = allItems.filter(it=>{
+    if(!activeSources.has(it.sourceId)) return false;
+    if(zonesActive && !zonesActive.has(it.zone)) return false;
+    if(q){
+      const hay = (it.title+' '+it.sourceName+' '+it.desc).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  renderGrid(filtered);
+}
+
+function getEffectiveZoneFilter(){
+  const chips = [...document.querySelectorAll('#zoneChips .chip')];
+  const activeIds = chips.filter(c=>c.dataset.active==='true').map(c=>c.dataset.zone);
+  if(activeIds.length===0 || activeIds.length===chips.length) return null; // no filter = all
+  return new Set(activeIds);
+}
+
+function renderGrid(items){
+  const grid = document.getElementById('grid');
+  if(items.length===0){
+    grid.innerHTML = `<div class="empty-state"><b>Nessuna notizia trovata</b>Prova a cambiare zona, testata o parola cercata.</div>`;
+    return;
+  }
+  grid.innerHTML = items.slice(0,90).map(it=>{
+    const z = zoneById[it.zone];
+    return `<a class="card" href="${it.link}" target="_blank" rel="noopener">
+      <div class="card-meta">
+        <span class="badge source">${it.sourceName}</span>
+        <span class="badge zone" style="color:${z?z.color:'#A13A2A'}">${zoneLabel(it.zone)}</span>
+        <span class="card-time">${relativeTime(it.pubDate)}</span>
+      </div>
+      <h2>${escapeHtml(it.title)}</h2>
+      <p>${escapeHtml(it.desc).slice(0,180)}</p>
+      <span class="read-more">Leggi sulla fonte →</span>
+    </a>`;
+  }).join('');
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function relativeTime(date){
+  const diffMs = Date.now() - date.getTime();
+  const min = Math.round(diffMs/60000);
+  if(min < 1) return 'proprio ora';
+  if(min < 60) return min + ' min fa';
+  const h = Math.round(min/60);
+  if(h < 24) return h + (h===1?' ora fa':' ore fa');
+  const d = Math.round(h/24);
+  return d + (d===1?' giorno fa':' giorni fa');
+}
+
+function renderTicker(){
+  const track = document.getElementById('tickerTrack');
+  const top = allItems.slice(0,14);
+  if(top.length===0){
+    track.innerHTML = '<div class="ticker-item mono">Nessuna notizia disponibile al momento.</div>';
+    return;
+  }
+  const html = top.map(it=>`<span class="ticker-item"><b>${it.sourceName}</b>${escapeHtml(it.title)}</span>`).join('');
+  track.innerHTML = html + html; // duplicate for seamless loop
+}
+
+// ---------- ADD FEED ----------
+function removeFeed(id){
+  customFeeds = customFeeds.filter(f=>f.id!==id);
+  feeds = [...DEFAULT_FEEDS, ...customFeeds];
+  activeSources.delete(id);
+  saveCustomFeeds(); savePrefs();
+  renderChips();
+  refreshAll();
+}
+
+document.getElementById('addToggle').addEventListener('click', ()=>{
+  document.getElementById('addPanel').classList.toggle('open');
+  document.getElementById('filterPanel').classList.remove('open');
+  document.getElementById('filterToggle').dataset.open = 'false';
+});
+
+document.getElementById('filterToggle').addEventListener('click', ()=>{
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.dataset.open = String(isOpen);
+  document.getElementById('addPanel').classList.remove('open');
+});
+
+document.getElementById('resetFilters').addEventListener('click', ()=>{
+  const usedZones = new Set(feeds.map(f=>f.zone));
+  activeZones = new Set(usedZones);
+  activeSources = new Set(feeds.map(f=>f.id));
+  renderChips();
+  savePrefs();
+  applyFilters();
+});
+
+document.getElementById('newSubmit').addEventListener('click', async ()=>{
+  const name = document.getElementById('newName').value.trim();
+  const zone = document.getElementById('newZone').value;
+  const url = document.getElementById('newUrl').value.trim();
+  const fb = document.getElementById('addFeedback');
+  if(!name || !url){ fb.textContent = 'Inserisci almeno nome e URL del feed.'; return; }
+  fb.textContent = 'Verifica del feed in corso…';
+  const id = 'custom-' + name.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-' + Date.now().toString(36);
+  const testFeed = {id, name, zone, url};
+  const items = await fetchFeed(testFeed);
+  if(feedStatus[id]?.state === 'fail'){
+    fb.textContent = 'Non riesco a leggere questo feed (' + (feedStatus[id].attempts||[]).join(' · ') + ').';
+    return;
+  }
+  customFeeds.push(testFeed);
+  feeds = [...DEFAULT_FEEDS, ...customFeeds];
+  activeSources.add(id);
+  saveCustomFeeds(); savePrefs();
+  fb.textContent = `Aggiunta "${name}" — ${items.length} articoli trovati.`;
+  document.getElementById('newName').value='';
+  document.getElementById('newUrl').value='';
+  renderChips();
+  refreshAll();
+});
+
+// ---------- EVENTS ----------
+document.getElementById('refreshBtn').addEventListener('click', refreshAll);
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+// ---------- INIT ----------
+(async function init(){
+  renderZoneSelect();
+  await loadStorage();
+  renderChips();
+  await refreshAll();
+  refreshTimer = setInterval(refreshAll, 5*60*1000);
+})();
+</script>
+</body>
+</html>
