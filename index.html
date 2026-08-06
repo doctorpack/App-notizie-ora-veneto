@@ -9,21 +9,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#17181A;
-    --ink-2:#212226;
-    --paper:#F1EEE6;
-    --paper-dim:#B9B6AC;
-    --rosso:#B23A2E;
+    --bg:#E7DAB2;
+    --ink:#2A2013;
+    --ink-2:#F2E9CE;
+    --paper:#2A2013;
+    --paper-dim:#7C6A48;
+    --rosso:#A13A2A;
     --rosso-2:#8C2C22;
     --ocra:#C89B3C;
-    --line: rgba(241,238,230,0.12);
-    --line-strong: rgba(241,238,230,0.22);
+    --ocra-text:#8A5F14;
+    --line: rgba(42,32,19,0.16);
+    --line-strong: rgba(42,32,19,0.30);
     --radius: 14px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--ink);
+    background:
+      radial-gradient(circle at 12% 18%, rgba(120,88,40,0.07), transparent 38%),
+      radial-gradient(circle at 82% 12%, rgba(120,88,40,0.05), transparent 32%),
+      radial-gradient(circle at 78% 70%, rgba(120,88,40,0.06), transparent 40%),
+      radial-gradient(circle at 25% 85%, rgba(120,88,40,0.05), transparent 36%),
+      radial-gradient(circle, rgba(42,32,19,0.06) 1px, transparent 1.2px) 0 0/16px 16px,
+      var(--bg);
     color:var(--paper);
     font-family:'Inter',system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -67,7 +75,7 @@
   .ticker-track{
     display:flex;
     white-space:nowrap;
-    animation: scroll-left 60s linear infinite;
+    animation: scroll-left 140s linear infinite;
     padding-left:100%;
   }
   .ticker-wrap:hover .ticker-track{ animation-play-state: paused; }
@@ -92,10 +100,29 @@
 
   /* ---------- HEADER ---------- */
   header{
-    padding:36px 24px 20px;
+    padding:36px 24px 18px;
     max-width:1180px;
     margin:0 auto;
-    border-bottom:1px solid var(--line);
+    border-bottom:3px solid var(--paper);
+    position:relative;
+  }
+  header::after{
+    content:'';
+    position:absolute;
+    left:24px; right:24px; bottom:-7px;
+    height:1px;
+    background:var(--paper);
+    opacity:0.6;
+  }
+  .edition-line{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:14px;
   }
   .masthead{
     display:flex;
@@ -196,6 +223,69 @@
   }
   .add-toggle:hover{ filter:brightness(1.08); }
 
+  .filter-toggle{
+    background:transparent;
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    padding:0 18px;
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:border-color .15s, background .15s;
+  }
+  .filter-toggle:hover{ border-color:var(--ocra); }
+  .filter-toggle[data-open="true"]{ border-color:var(--ocra); background:rgba(200,155,60,0.12); }
+  .filter-toggle .count{
+    background:var(--ocra);
+    color:var(--ink);
+    font-size:11px;
+    font-weight:700;
+    border-radius:100px;
+    padding:1px 7px;
+    display:none;
+  }
+  .filter-toggle[data-count]:not([data-count="0"]) .count{ display:inline; }
+  .filter-toggle .chevron{ transition:transform .2s; opacity:.7; }
+  .filter-toggle[data-open="true"] .chevron{ transform:rotate(180deg); }
+
+  #filterPanel{
+    display:none;
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:18px;
+  }
+  #filterPanel.open{ display:block; }
+  .filter-panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .filter-panel-head span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--paper-dim);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+  #resetFilters{
+    background:none;
+    border:none;
+    color:var(--ocra);
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+
   .chip-group{
     margin-bottom:12px;
   }
@@ -252,7 +342,7 @@
     border-radius:10px;
     margin-bottom:16px;
   }
-  #snapshotBanner strong{ color:var(--ocra); }
+  #snapshotBanner strong{ color:var(--ocra-text); }
   #addPanel{
     display:none;
     background:var(--ink-2);
@@ -280,7 +370,7 @@
   }
   @media(max-width:760px){ .add-form{ grid-template-columns:1fr; } }
   .add-form input, .add-form select{
-    background:var(--ink);
+    background:var(--ink-2);
     border:1px solid var(--line-strong);
     color:var(--paper);
     padding:10px 12px;
@@ -342,8 +432,8 @@
     font-weight:500;
     letter-spacing:0.02em;
   }
-  .badge.source{ background:rgba(200,155,60,0.16); color:var(--ocra); }
-  .badge.zone{ background:rgba(178,58,46,0.18); color:#e2897d; }
+  .badge.source{ background:rgba(200,155,60,0.20); color:var(--ocra-text); }
+  .badge.zone{ background:rgba(161,58,42,0.14); color:var(--rosso); }
   .card-time{ color:var(--paper-dim); margin-left:auto; }
   .card h2{
     font-family:'Fraunces',serif;
@@ -356,7 +446,7 @@
   .card p{
     font-size:13.5px;
     line-height:1.5;
-    color:#CFCCC2;
+    color:#5B4E38;
     margin:0;
     display:-webkit-box;
     -webkit-line-clamp:3;
@@ -365,7 +455,7 @@
   }
   .card .read-more{
     font-size:12.5px;
-    color:var(--ocra);
+    color:var(--ocra-text);
     font-weight:600;
     margin-top:auto;
     display:flex;
@@ -389,7 +479,7 @@
     font-family:'IBM Plex Mono',monospace;
     margin-top:6px;
   }
-  .source-status .fail{ color:#e2897d; }
+  .source-status .fail{ color:#9C2A1F; }
   .source-status details summary{ cursor:pointer; color:var(--paper); margin-bottom:6px; }
   .source-status details div{ padding:2px 0 2px 10px; }
 
@@ -405,7 +495,7 @@
 
   /* focus visibility */
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
-    outline:2px solid var(--ocra);
+    outline:2px solid var(--ocra-text);
     outline-offset:2px;
   }
 
@@ -428,6 +518,10 @@
 </div>
 
 <header>
+  <div class="edition-line">
+    <span id="editionDate">EDIZIONE DIGITALE</span>
+    <span>VERONA E PROVINCIA</span>
+  </div>
   <div class="masthead">
     <h1>IL <span>FILO</span></h1>
     <div class="tagline">Le notizie di Verona e provincia, testata per testata, quasi in tempo reale.</div>
@@ -449,11 +543,16 @@
       <input type="text" id="searchInput" placeholder="Cerca per testata o parola chiave…">
     </div>
     <button class="add-toggle" id="addToggle">+ Aggiungi testata</button>
+    <button class="filter-toggle" id="filterToggle" data-open="false" data-count="0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="18" x2="14" y2="18"></line></svg>
+      Filtri <span class="count" id="filterCount">0</span>
+      <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
   </div>
 
   <div id="addPanel">
     <h3>Aggiungi una testata</h3>
-    <p>Conosci un giornale locale non ancora in elenco? Incolla il suo feed RSS: comparirà subito tra i filtri e nelle notizie.</p>
+    <p>Conosci un giornale locale non ancora in elenco? Incolla il suo feed RSS: comparirà subito tra le notizie.</p>
     <div class="add-form">
       <input type="text" id="newName" placeholder="Nome testata (es. Gardapost)">
       <select id="newZone"></select>
@@ -463,16 +562,23 @@
     <div id="addFeedback"></div>
   </div>
 
+  <div id="filterPanel">
+    <div class="filter-panel-head">
+      <span>Per default sono visibili tutte le notizie — filtra se vuoi restringere</span>
+      <button id="resetFilters">Mostra tutte</button>
+    </div>
+    <div class="chip-group">
+      <span class="chip-group-label">Zona</span>
+      <div class="chips" id="zoneChips"></div>
+    </div>
+    <div class="chip-group">
+      <span class="chip-group-label">Testata</span>
+      <div class="chips" id="sourceChips"></div>
+    </div>
+  </div>
+
   <div id="snapshotBanner">
     <strong>Modalità istantanea.</strong> Il recupero live dei feed non è raggiungibile in questa anteprima (i proxy verso siti esterni sono bloccati per sicurezza). Qui sotto vedi una selezione reale di notizie raccolta il 29 luglio 2026. Se ospiti questo file sul tuo sito, il recupero live tornerà a funzionare normalmente.
-  </div>
-  <div class="chip-group">
-    <span class="chip-group-label">Zona</span>
-    <div class="chips" id="zoneChips"></div>
-  </div>
-  <div class="chip-group">
-    <span class="chip-group-label">Testata</span>
-    <div class="chips" id="sourceChips"></div>
   </div>
   <div class="source-status" id="sourceStatus"></div>
 </div>
@@ -488,13 +594,13 @@
 <script>
 // ---------- ZONES ----------
 const ZONES = [
-  {id:'citta', label:'Città', color:'#B23A2E'},
-  {id:'regione', label:'Regione', color:'#7A8FA6'},
-  {id:'baldo-garda', label:'Baldo–Garda', color:'#3E7C8C'},
-  {id:'lessinia', label:'Lessinia', color:'#5C8A54'},
-  {id:'bassa', label:'Bassa Veronese', color:'#B5852F'},
-  {id:'est', label:'Est Veronese', color:'#8C6BAE'},
-  {id:'valpolicella', label:'Valpolicella', color:'#A0522D'},
+  {id:'citta', label:'Città', color:'#A13A2A'},
+  {id:'regione', label:'Regione', color:'#45607A'},
+  {id:'baldo-garda', label:'Baldo–Garda', color:'#2E6472'},
+  {id:'lessinia', label:'Lessinia', color:'#3F6B39'},
+  {id:'bassa', label:'Bassa Veronese', color:'#8F6A22'},
+  {id:'est', label:'Est Veronese', color:'#6B4C8C'},
+  {id:'valpolicella', label:'Valpolicella', color:'#8A4726'},
 ];
 const zoneById = Object.fromEntries(ZONES.map(z=>[z.id,z]));
 
@@ -504,6 +610,10 @@ const DEFAULT_FEEDS = [
   {id:'veronasera', name:'VeronaSera', zone:'citta', url:'http://www.veronasera.it/rss'},
   {id:'veronain', name:'Verona In', zone:'citta', url:'http://www.verona-in.it/feed/'},
   {id:'ansaveneto', name:'ANSA Veneto', zone:'regione', url:'https://www.ansa.it/veneto/notizie/veneto_rss.xml'},
+  {id:'giornaleveronesi', name:'Il Giornale dei Veronesi', zone:'citta', url:'https://ilgiornaledeiveronesi.it/feed/'},
+  {id:'giornaleveronesi-garda', name:'Il Giornale dei Veronesi — Garda', zone:'baldo-garda', url:'https://ilgiornaledeiveronesi.it/category/notizie-verona/provincia/lago-di-garda/feed/'},
+  {id:'tgverona', name:'TgVerona', zone:'citta', url:'https://tgverona.telenuovo.it/feed/'},
+  {id:'primaverona', name:'Prima Verona', zone:'citta', url:'https://primadituttoverona.it/feed/'},
 ];
 
 const STORAGE_KEY = 'il-filo-custom-feeds';
@@ -568,6 +678,11 @@ const SNAPSHOT_ITEMS = [
     desc:"Il bilancio del primo semestre 2026 mostra una crescita occupazionale superiore al 2025, con Verona seconda provincia per nuovi contratti dopo Venezia.",
     link:'https://www.ansa.it/veneto/notizie/2026/07/15/in-veneto-76-mila-posti-di-lavoro-in-piu-da-inizio-anno-crescono-anche-le-assunzioni_830e4943-72a1-4612-a3ad-3ccacbf05d02.html',
     pubDate:'2026-07-15T12:00:00'},
+  {sourceId:'giornaleveronesi', sourceName:'Il Giornale dei Veronesi', zone:'regione',
+    title:"Adige ai livelli di guardia: \"priorità assoluta garantire l'acqua potabile\"",
+    desc:"La Regione riduce i prelievi a uso irriguo per tutelare l'approvvigionamento potabile, con la portata del fiume ormai sotto la soglia di attenzione.",
+    link:'https://ilgiornaledeiveronesi.it/notizie-veneto/protezione-civile-veneto/adige-ai-livelli-di-guardia-venturini-priorita-assoluta-garantire-lacqua-potabile/',
+    pubDate:'2026-07-29T09:00:00'},
 ];
 
 let customFeeds = [];
@@ -724,6 +839,18 @@ function renderChips(){
   });
 
   renderSourceStatus();
+  updateFilterBadge();
+}
+
+function updateFilterBadge(){
+  const totalZones = ZONES.filter(z=>feeds.some(f=>f.zone===z.id)).length;
+  const totalSources = feeds.length;
+  const zonesOff = totalZones - activeZones.size;
+  const sourcesOff = totalSources - activeSources.size;
+  const count = Math.max(0, zonesOff) + Math.max(0, sourcesOff);
+  const btn = document.getElementById('filterToggle');
+  btn.dataset.count = String(count);
+  document.getElementById('filterCount').textContent = count;
 }
 
 function renderSourceStatus(){
@@ -832,7 +959,7 @@ function renderGrid(items){
     return `<a class="card" href="${it.link}" target="_blank" rel="noopener">
       <div class="card-meta">
         <span class="badge source">${it.sourceName}</span>
-        <span class="badge zone" style="color:${z?z.color:'#e2897d'}">${zoneLabel(it.zone)}</span>
+        <span class="badge zone" style="color:${z?z.color:'#A13A2A'}">${zoneLabel(it.zone)}</span>
         <span class="card-time">${relativeTime(it.pubDate)}</span>
       </div>
       <h2>${escapeHtml(it.title)}</h2>
@@ -880,6 +1007,25 @@ function removeFeed(id){
 
 document.getElementById('addToggle').addEventListener('click', ()=>{
   document.getElementById('addPanel').classList.toggle('open');
+  document.getElementById('filterPanel').classList.remove('open');
+  document.getElementById('filterToggle').dataset.open = 'false';
+});
+
+document.getElementById('filterToggle').addEventListener('click', ()=>{
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.dataset.open = String(isOpen);
+  document.getElementById('addPanel').classList.remove('open');
+});
+
+document.getElementById('resetFilters').addEventListener('click', ()=>{
+  const usedZones = new Set(feeds.map(f=>f.zone));
+  activeZones = new Set(usedZones);
+  activeSources = new Set(feeds.map(f=>f.id));
+  renderChips();
+  savePrefs();
+  applyFilters();
 });
 
 document.getElementById('newSubmit').addEventListener('click', async ()=>{
