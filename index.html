@@ -693,16 +693,15 @@ let allItems = []; // {title, link, pubDate, desc, sourceId, sourceName, zone}
 let feedStatus = {}; // id -> 'ok' | 'fail'
 let refreshTimer = null;
 
+// Se hai una chiave API personale gratuita di rss2json.com, incollala qui tra gli apici:
+// così il tuo sito non dipende più dal limite condiviso della chiave pubblica.
+const RSS2JSON_API_KEY = 'eiojpvkfckgw3ssitfdik4q6zznrpsjqxvzdv86o';
+
 // Multiple fallback strategies: try each in order until one returns items.
 const PROXY_STRATEGIES = [
   {
-    name: 'allorigins',
-    build: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    parse: (text) => parseXmlFeed(text)
-  },
-  {
     name: 'rss2json',
-    build: (url) => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=25`,
+    build: (url) => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=25` + (RSS2JSON_API_KEY ? `&api_key=${RSS2JSON_API_KEY}` : ''),
     parse: (text) => {
       const data = JSON.parse(text);
       if(data.status !== 'ok' || !Array.isArray(data.items)) throw new Error('rss2json status: ' + data.status + (data.message?(' — '+data.message):''));
@@ -713,6 +712,11 @@ const PROXY_STRATEGIES = [
         desc: it.description || it.content || ''
       }));
     }
+  },
+  {
+    name: 'allorigins',
+    build: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    parse: (text) => parseXmlFeed(text)
   },
   {
     name: 'corsproxy.io',
